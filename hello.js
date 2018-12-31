@@ -2,7 +2,7 @@ class Square extends React.Component{
 
 	constructor(props) {
     super(props);
-    this.state = {val: ''};
+    this.state = {val: '', disabled:false};
 	this.val = '';
 	this.onChangeHandler = this.onChangeHandler.bind(this);
 	//console.log('Inside sq: ');
@@ -11,7 +11,7 @@ class Square extends React.Component{
   }
 
 	onChangeHandler(e){
-		if(!(parseInt(e.target.value)>=0 && parseInt(e.target.value)<=9)){
+		if(!(parseInt(e.target.value)>=1 && parseInt(e.target.value)<=9)){
 			//console.log("kmksmdkms");
 			this.setState({val: ''});
 			this.val = '';
@@ -27,13 +27,26 @@ class Square extends React.Component{
 	
 
 	render(){
-		return (
+		var enabledSquare = (
 		<form style={{width:"50", height:"50", margins:"0", padding:"0", autocomplete:"off", transition:"0.6s"}}>
 		  <label style={{width:"50", height:"50", margins:"0", padding:"0"}}>
 			<input className='sqClass' style={{width:"50", height:"50", margins:"0", padding:"0", autocomplete:"false", textAlign:"center", fontSize:"20",backgroundColor:this.props.sqColor, borderColor:"black", borderWidth:"1", color:"rgb(186, 162, 12)"}} maxLength="1" type="text" name="name" value={this.state.val} onChange={(e) => this.onChangeHandler(e)}/>
 		  </label>
 		</form>
 		);
+		
+		var disabledSquare = (
+		<form style={{width:"50", height:"50", margins:"0", padding:"0", autocomplete:"off", transition:"0.6s", pointerEvents:"none"}}>
+		  <label style={{width:"50", height:"50", margins:"0", padding:"0"}}>
+			<input style={{width:"50", height:"50", margins:"0", padding:"0", autocomplete:"false", textAlign:"center", fontSize:"20",backgroundColor:"rgba(211, 211, 211, 0.8)", borderColor:"black", borderWidth:"1", color:"rgb(186, 162, 12)", cursor:'not-allowed'}} maxLength="1" type="text" name="name" value={this.state.val} onChange={(e) => this.onChangeHandler(e)} disabled/>
+		  </label>
+		</form>
+		);
+		
+		if(this.state.disabled === true){
+			return disabledSquare;
+		}
+		return enabledSquare;
 	}
 }
 
@@ -82,16 +95,102 @@ class SudokuGrid extends React.Component{
 		 ['','','','','','','','',''],
 		 ['','','','','','','','','']
 		];
-		this.printToGUI = this.printToGUI.bind(this);
+		this.solve = this.solve.bind(this);
+		this.clearGrid = this.clearGrid.bind(this);
+		this.newGrid = this.newGrid.bind(this);
 	}
 	
-	printToGUI(e){
-		this.grid = this.solve();
+	clearGridArray(){
+		this.grid = [['','','','','','','','',''], 
+					 ['','','','','','','','',''],
+					 ['','','','','','','','',''],
+					 ['','','','','','','','',''],
+					 ['','','','','','','','',''],
+					 ['','','','','','','','',''],
+					 ['','','','','','','','',''],
+					 ['','','','','','','','',''],
+					 ['','','','','','','','','']
+					];
+	}
+	
+	clearGrid(e){
+		this.clearGridArray();
+		this.printToGUI('clearGrid');
+	}
+	
+	getRandomBetweenRange(min, max){
+		return Math.floor((Math.random() * (max-min)) + min);
+	}
+	
+	getRandomPermutation(min, max){
+		var orgList = [];
+		var permList = [];
+		for (var i=min; i<=max; i++){
+			orgList.push(i);
+		}
+		for (var i=min; i<=max; i++){
+			var j = this.getRandomBetweenRange(0, orgList.length-1);
+			var elm = orgList[j];
+			orgList.splice(j, 1);
+			permList.push(elm);
+		}
+		return permList;
+	}
+	
+	newGrid(e){
+		this.clearGridArray();
+		var cnt = 0;
+		var row = 0;
+		var col = 0;
+		var val = 0;
+		while(cnt<20){
+			row = this.getRandomBetweenRange(0,8);
+			col = this.getRandomBetweenRange(0,8);
+			val = this.getRandomBetweenRange(1,9);
+			this.grid[row][col] = val.toString();
+			if (this.isSudokuGridValid(this.grid)){
+				cnt++;
+			}
+			else{
+				this.grid[row][col] = '';
+			}				
+		}
+		this.solveSudoku(this.grid, 0, 0);
+		var list = this.getRandomPermutation(0, 80);
+		//console.log(list);
+		for (var i = 0; i<list.length; i++){
+			//console.log('i: ' + i);
+			var elm = this.grid[Math.floor(parseInt(list[i])/9)][parseInt(list[i])%9];
+			this.grid[Math.floor(parseInt(list[i])/9)][parseInt(list[i])%9] = '';
+			var solutions = [];
+			var gridCopy = [];
+			for (var k = 0; k < this.grid.length; k++){
+				gridCopy[k] = this.grid[k].slice();
+			}
+			this.noOfSudokuSolutions(gridCopy, 0, 0, solutions);
+			//console.log('soln len: ' + solutions.length);
+			if (solutions.length > 1){
+				this.grid[Math.floor(parseInt(list[i])/9)][parseInt(list[i])%9] = elm;
+			} 
+		}
+		this.printToGUI('newGrid');
+	}
+	
+	printToGUI(callFrom='default'){
+		//this.grid = this.solve();
 		for(var i=0;i<9;i++){
 			for(var j=0;j<9;j++){
 				var row = Math.floor(parseInt(i)/3)*3 + Math.floor(parseInt(j)/3);
 				var col = (parseInt(i)%3)*3 + (parseInt(j)%3);
-				this.refs[i].refs[j].setState({val:this.grid[row][col]});
+				if (callFrom === 'newGrid'){
+					this.refs[i].refs[j].setState({val:this.grid[row][col], disabled:!(this.grid[row][col]==='')});
+				}
+				else if (callFrom === 'clearGrid'){
+					this.refs[i].refs[j].setState({val:this.grid[row][col], disabled:false});
+				}
+				else{
+					this.refs[i].refs[j].setState({val:this.grid[row][col]});
+				}
 			}
 		}
 		
@@ -117,6 +216,9 @@ class SudokuGrid extends React.Component{
 	
 	isValid(grid, row, col, val){
 		// check in row
+		if (val === ''){
+			return true;
+		}
 		for(var i=0; i<9;i++){
 			if (grid[row][i] === val){
 				return false;
@@ -143,11 +245,32 @@ class SudokuGrid extends React.Component{
 		
 		return true;
 	}
+
+	noOfSudokuSolutions(grid, row, col, allSolutions){
+		// Find next unassigned cell
+		var cell = this.getNextCell(grid, row, col);
+		//console.log(cell);
+		if (cell[0] == null){
+			var gridCopy = [];
+			for (var i = 0; i < grid.length; i++){
+				gridCopy[i] = grid[i].slice();
+			}
+			allSolutions.push(gridCopy);
+			return;
+		}
+		for (var i=1; i<=9;i++){
+			if (this.isValid(grid, cell[0], cell[1], i.toString())){
+				grid[cell[0]][cell[1]] = i.toString();
+				this.noOfSudokuSolutions(grid, cell[0], cell[1], allSolutions);
+				grid[cell[0]][cell[1]] = '';
+			}
+		}
+	}
 	
 	solveSudoku(grid, row, col){
 		// Find next unassigned cell
 		var cell = this.getNextCell(grid, row, col);
-		console.log(cell);
+		//console.log(cell);
 		if (cell[0] == null){
 			return true;
 		}
@@ -164,14 +287,36 @@ class SudokuGrid extends React.Component{
 		return false;
 	}
 	
-	solve(){
+	isSudokuGridValid(grid){
+		for (var i=0; i<9; i++){
+			for (var j=0; j<9; j++){
+				var val = grid[i][j];
+				grid[i][j] = '';
+				if (!this.isValid(grid, i, j, val)){
+					grid[i][j] = val;
+					return false;
+				}
+				grid[i][j] = val;
+			}
+		}
+		return true;
+	}
+	
+	solve(e){
 		var gridCopy = [];
 		for (var i = 0; i < this.grid.length; i++){
 			gridCopy[i] = this.grid[i].slice();
 		}
+		//check if input is valid
+		var valid = this.isSudokuGridValid(gridCopy);
+		if (!valid){
+			console.log('Wrong input!!!');
+			return gridCopy;
+		}
 		var result = this.solveSudoku(gridCopy, 0, 0);
-		console.log(result);
-		return gridCopy;
+		//console.log(result);
+		this.grid = gridCopy;
+		this.printToGUI();
 	}
 	
 	render(){
@@ -192,13 +337,12 @@ class SudokuGrid extends React.Component{
 					<div style={{display:"inline-block"}}><ThreeByThreeGrid propTest={this.test} gridId='7' gridColor="rgba(102, 245, 79, 0.9)" ref="7"/></div>
 					<div style={{display:"inline-block"}}><ThreeByThreeGrid propTest={this.test} gridId='8' gridColor="rgba(150, 245, 120, 0.8)" ref="8"/></div>
 				</div>
-				<button className="btn-lg" onClick={(e) => this.printToGUI(e)}>Solve</button>
+				<button className="btn-lg" onClick={(e) => this.newGrid(e)}>New Game</button>
+				<button className="btn-lg" onClick={(e) => this.solve(e)}>Solve</button>
+				<button className="btn-lg" onClick={(e) => this.clearGrid(e)}>Clear Grid</button>
 			</div>
 		);
-	}
-	
-	
-	
+	}	
 }
 
 ReactDOM.render(
