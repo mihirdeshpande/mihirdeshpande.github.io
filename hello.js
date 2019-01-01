@@ -30,7 +30,7 @@ class Square extends React.Component{
 		var enabledSquare = (
 		<form style={{width:"50", height:"50", margins:"0", padding:"0", autocomplete:"off", transition:"0.6s"}}>
 		  <label style={{width:"50", height:"50", margins:"0", padding:"0"}}>
-			<input className='sqClass' style={{width:"50", height:"50", margins:"0", padding:"0", autocomplete:"false", textAlign:"center", fontSize:"20",backgroundColor:this.props.sqColor, borderColor:"black", borderWidth:"1", color:"rgb(186, 162, 12)"}} maxLength="1" type="text" name="name" value={this.state.val} onChange={(e) => this.onChangeHandler(e)}/>
+			<input className='sqClass' style={{width:"50", height:"50", margins:"0", padding:"0", autocomplete:"false", textAlign:"center", fontSize:"20",backgroundColor:this.props.sqColor, borderColor:"black", borderWidth:"1", color:"rgb(91, 44, 0)"}} maxLength="1" type="text" name="name" value={this.state.val} onChange={(e) => this.onChangeHandler(e)}/>
 		  </label>
 		</form>
 		);
@@ -38,7 +38,7 @@ class Square extends React.Component{
 		var disabledSquare = (
 		<form style={{width:"50", height:"50", margins:"0", padding:"0", autocomplete:"off", transition:"0.6s", pointerEvents:"none"}}>
 		  <label style={{width:"50", height:"50", margins:"0", padding:"0"}}>
-			<input style={{width:"50", height:"50", margins:"0", padding:"0", autocomplete:"false", textAlign:"center", fontSize:"20",backgroundColor:"rgba(211, 211, 211, 0.8)", borderColor:"black", borderWidth:"1", color:"rgb(186, 162, 12)", cursor:'not-allowed'}} maxLength="1" type="text" name="name" value={this.state.val} onChange={(e) => this.onChangeHandler(e)} disabled/>
+			<input style={{width:"50", height:"50", margins:"0", padding:"0", autocomplete:"false", textAlign:"center", fontSize:"20",backgroundColor:"rgba(175, 175, 175, 1)", borderColor:"black", borderWidth:"1", color:"rgb(91, 44, 0)", cursor:'not-allowed'}} maxLength="1" type="text" name="name" value={this.state.val} onChange={(e) => this.onChangeHandler(e)} disabled/>
 		  </label>
 		</form>
 		);
@@ -98,6 +98,8 @@ class SudokuGrid extends React.Component{
 		this.solve = this.solve.bind(this);
 		this.clearGrid = this.clearGrid.bind(this);
 		this.newGrid = this.newGrid.bind(this);
+		
+		//this.newGridFast = this.newGridFast.bind(this);
 	}
 	
 	clearGridArray(){
@@ -137,42 +139,56 @@ class SudokuGrid extends React.Component{
 		return permList;
 	}
 	
-	newGrid(e){
-		this.clearGridArray();
-		var cnt = 0;
-		var row = 0;
-		var col = 0;
-		var val = 0;
-		while(cnt<20){
-			row = this.getRandomBetweenRange(0,8);
-			col = this.getRandomBetweenRange(0,8);
-			val = this.getRandomBetweenRange(1,9);
-			this.grid[row][col] = val.toString();
-			if (this.isSudokuGridValid(this.grid)){
-				cnt++;
+	newGrid(level){
+		var initProblem = false;
+		while(!initProblem){
+			this.clearGridArray();
+			var cnt = 0;
+			var row = 0;
+			var col = 0;
+			var val = 0;
+			while(cnt<8){
+				row = this.getRandomBetweenRange(0,8);
+				col = this.getRandomBetweenRange(0,8);
+				val = this.getRandomBetweenRange(1,9);
+				this.grid[row][col] = val.toString();
+				if (this.isSudokuGridValid(this.grid)){
+					cnt++;
+				}
+				else{
+					this.grid[row][col] = '';
+				}				
 			}
-			else{
-				this.grid[row][col] = '';
-			}				
+			initProblem = this.solveSudoku(this.grid, 0, 0);
 		}
-		this.solveSudoku(this.grid, 0, 0);
+		
 		var list = this.getRandomPermutation(0, 80);
 		//console.log(list);
-		for (var i = 0; i<list.length; i++){
-			//console.log('i: ' + i);
+		//console.log('Init grid: ' + this.grid);
+		var upperBound = list.length;
+		if (level === 'easy'){
+			upperBound = Math.floor(upperBound/3);
+		}
+		else if (level === 'medium'){
+			upperBound = Math.floor(upperBound/2);
+		}
+		for (var i = 0; i<upperBound; i++){
 			var elm = this.grid[Math.floor(parseInt(list[i])/9)][parseInt(list[i])%9];
 			this.grid[Math.floor(parseInt(list[i])/9)][parseInt(list[i])%9] = '';
 			var solutions = [];
-			var gridCopy = [];
-			for (var k = 0; k < this.grid.length; k++){
-				gridCopy[k] = this.grid[k].slice();
-			}
-			this.noOfSudokuSolutions(gridCopy, 0, 0, solutions);
-			//console.log('soln len: ' + solutions.length);
+			this.noOfSudokuSolutions(this.grid, 0, 0, solutions);
+			//console.log('After: ' + this.grid);
 			if (solutions.length > 1){
 				this.grid[Math.floor(parseInt(list[i])/9)][parseInt(list[i])%9] = elm;
-			} 
+			}
 		}
+		this.printToGUI('newGrid');
+	}
+	
+	newGridFast(e){
+		this.clearGridArray();
+		var solutions = [];
+		this.fastSudokuGenerator(this.grid, 0, 0, solutions, '1'); 
 		this.printToGUI('newGrid');
 	}
 	
@@ -262,6 +278,10 @@ class SudokuGrid extends React.Component{
 			if (this.isValid(grid, cell[0], cell[1], i.toString())){
 				grid[cell[0]][cell[1]] = i.toString();
 				this.noOfSudokuSolutions(grid, cell[0], cell[1], allSolutions);
+				if (allSolutions.length >= 2){
+					grid[cell[0]][cell[1]] = '';
+					return;
+				}
 				grid[cell[0]][cell[1]] = '';
 			}
 		}
@@ -323,23 +343,26 @@ class SudokuGrid extends React.Component{
 		return (
 			<div ref="sudoku">
 				<div>
-					<div style={{display:"inline-block"}}><ThreeByThreeGrid propTest={this.test} gridId='0' gridColor="rgba(150, 245, 120, 0.8)" ref="0"/></div>
-					<div style={{display:"inline-block"}}><ThreeByThreeGrid propTest={this.test} gridId='1' gridColor="rgba(102, 245, 79, 0.9)" ref="1"/></div>
-					<div style={{display:"inline-block"}}><ThreeByThreeGrid propTest={this.test} gridId='2' gridColor="rgba(150, 245, 120, 0.8)" ref="2"/></div>
+					<div style={{display:"inline-block"}}><ThreeByThreeGrid propTest={this.test} gridId='0' gridColor="rgba(160, 252, 153, 0.8)" ref="0"/></div>
+					<div style={{display:"inline-block"}}><ThreeByThreeGrid propTest={this.test} gridId='1' gridColor="rgba(0, 199, 255, 0.8)" ref="1"/></div>
+					<div style={{display:"inline-block"}}><ThreeByThreeGrid propTest={this.test} gridId='2' gridColor="rgba(160, 252, 153, 0.8)" ref="2"/></div>
 				</div>
 				<div>
-					<div style={{display:"inline-block"}}><ThreeByThreeGrid propTest={this.test} gridId='3' gridColor="rgba(102, 245, 79, 0.9)" ref="3"/></div>
-					<div style={{display:"inline-block"}}><ThreeByThreeGrid propTest={this.test} gridId='4' gridColor="rgba(150, 245, 120, 0.8)" ref="4"/></div>
-					<div style={{display:"inline-block"}}><ThreeByThreeGrid propTest={this.test} gridId='5' gridColor="rgba(102, 245, 79, 0.9)" ref="5"/></div>
+					<div style={{display:"inline-block"}}><ThreeByThreeGrid propTest={this.test} gridId='3' gridColor="rgba(0, 199, 255, 0.8)" ref="3"/></div>
+					<div style={{display:"inline-block"}}><ThreeByThreeGrid propTest={this.test} gridId='4' gridColor="rgba(160, 252, 153, 0.8)" ref="4"/></div>
+					<div style={{display:"inline-block"}}><ThreeByThreeGrid propTest={this.test} gridId='5' gridColor="rgba(0, 199, 255, 0.8)" ref="5"/></div>
 				</div>
 				<div>
-					<div style={{display:"inline-block"}}><ThreeByThreeGrid propTest={this.test} gridId='6' gridColor="rgba(150, 245, 120, 0.8)" ref="6"/></div>
-					<div style={{display:"inline-block"}}><ThreeByThreeGrid propTest={this.test} gridId='7' gridColor="rgba(102, 245, 79, 0.9)" ref="7"/></div>
-					<div style={{display:"inline-block"}}><ThreeByThreeGrid propTest={this.test} gridId='8' gridColor="rgba(150, 245, 120, 0.8)" ref="8"/></div>
+					<div style={{display:"inline-block"}}><ThreeByThreeGrid propTest={this.test} gridId='6' gridColor="rgba(160, 252, 153, 0.8)" ref="6"/></div>
+					<div style={{display:"inline-block"}}><ThreeByThreeGrid propTest={this.test} gridId='7' gridColor="rgba(0, 199, 255, 0.8)" ref="7"/></div>
+					<div style={{display:"inline-block"}}><ThreeByThreeGrid propTest={this.test} gridId='8' gridColor="rgba(160, 252, 153, 0.8)" ref="8"/></div>
 				</div>
-				<button className="btn-lg" onClick={(e) => this.newGrid(e)}>New Game</button>
+				<button className="btn-lg" onClick={(e) => this.newGrid('easy')}>Easy</button>
+				<button className="btn-lg" onClick={(e) => this.newGrid('medium')}>Medium</button>
+				<button className="btn-lg" onClick={(e) => this.newGrid('hard')}>Hard</button>
 				<button className="btn-lg" onClick={(e) => this.solve(e)}>Solve</button>
 				<button className="btn-lg" onClick={(e) => this.clearGrid(e)}>Clear Grid</button>
+				
 			</div>
 		);
 	}	
