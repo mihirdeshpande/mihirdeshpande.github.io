@@ -28,17 +28,17 @@ class Square extends React.Component{
 
 	render(){
 		var enabledSquare = (
-		<form style={{width:"50", height:"50", margins:"0", padding:"0", autocomplete:"off", transition:"0.6s"}}>
+		<form style={{width:"50", height:"50", margins:"0", padding:"0", transition:"0.6s"}}>
 		  <label style={{width:"50", height:"50", margins:"0", padding:"0"}}>
-			<input className='sqClass' style={{width:"50", height:"50", margins:"0", padding:"0", autocomplete:"false", textAlign:"center", fontSize:"20",backgroundColor:this.props.sqColor, borderColor:"black", borderWidth:"1", color:"rgb(91, 44, 0)"}} maxLength="1" type="text" name="name" value={this.state.val} onChange={(e) => this.onChangeHandler(e)}/>
+			<input className='sqClass' style={{width:"50", height:"50", margins:"0", padding:"0", autoComplete:"off", textAlign:"center", fontSize:"20",backgroundColor:this.props.sqColor, borderColor:"black", borderWidth:"1", color:"rgb(91, 44, 0)"}} maxLength="1" type="text" name="name" value={this.state.val} onChange={(e) => this.onChangeHandler(e)}/>
 		  </label>
 		</form>
 		);
 		
 		var disabledSquare = (
-		<form style={{width:"50", height:"50", margins:"0", padding:"0", autocomplete:"off", transition:"0.6s", pointerEvents:"none"}}>
+		<form style={{width:"50", height:"50", margins:"0", padding:"0", transition:"0.6s", pointerEvents:"none"}}>
 		  <label style={{width:"50", height:"50", margins:"0", padding:"0"}}>
-			<input style={{width:"50", height:"50", margins:"0", padding:"0", autocomplete:"false", textAlign:"center", fontSize:"20",backgroundColor:"rgba(175, 175, 175, 1)", borderColor:"black", borderWidth:"1", color:"rgb(91, 44, 0)", cursor:'not-allowed'}} maxLength="1" type="text" name="name" value={this.state.val} onChange={(e) => this.onChangeHandler(e)} disabled/>
+			<input style={{width:"50", height:"50", margins:"0", padding:"0", autoComplete:"off", textAlign:"center", fontSize:"20",backgroundColor:"rgba(175, 175, 175, 1)", borderColor:"black", borderWidth:"1", color:"rgb(91, 44, 0)", cursor:'not-allowed'}} maxLength="1" type="text" name="name" value={this.state.val} onChange={(e) => this.onChangeHandler(e)} disabled/>
 		  </label>
 		</form>
 		);
