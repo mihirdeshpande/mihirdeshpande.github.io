@@ -22,6 +22,7 @@ class Square extends React.Component{
 		}	
 		//console.log(this.val);
 		this.props.propTest(this.val, this.props.gridId, this.props.squareId);
+		this.props.displayMsg();
 	}
 	
 	
@@ -30,15 +31,15 @@ class Square extends React.Component{
 		var enabledSquare = (
 		<form style={{width:"50", height:"50", margins:"0", padding:"0", transition:"0.6s"}}>
 		  <label style={{width:"50", height:"50", margins:"0", padding:"0"}}>
-			<input className='sqClass' style={{width:"50", height:"50", margins:"0", padding:"0", textAlign:"center", fontSize:"20",backgroundColor:this.props.sqColor, borderColor:"black", borderWidth:"1", color:"rgb(91, 44, 0)"}} autoComplete="off" maxLength="1" type="text" name="name" value={this.state.val} onChange={(e) => this.onChangeHandler(e)}/>
+			<input className='sqClass' style={{width:"50", height:"50", margins:"0", padding:"0", textAlign:"center", fontSize:"20",backgroundColor:this.props.sqColor, borderColor:"black", borderWidth:"1", color:"rgb(91, 44, 0)", borderRadius:"5"}} autoComplete="off" maxLength="1" type="text" name="name" value={this.state.val} onChange={(e) => this.onChangeHandler(e)}/>
 		  </label>
 		</form>
 		);
 		
 		var disabledSquare = (
-		<form style={{width:"50", height:"50", margins:"0", padding:"0", transition:"0.6s", pointerEvents:"none"}}>
+		<form style={{width:"50", height:"50", margins:"0", padding:"0", autocomplete:"off", transition:"0.6s", pointerEvents:"none"}}>
 		  <label style={{width:"50", height:"50", margins:"0", padding:"0"}}>
-			<input style={{width:"50", height:"50", margins:"0", padding:"0", autoComplete:"off", textAlign:"center", fontSize:"20",backgroundColor:"rgba(175, 175, 175, 1)", borderColor:"black", borderWidth:"1", color:"rgb(91, 44, 0)", cursor:'not-allowed'}} autoComplete="off" maxLength="1" type="text" name="name" value={this.state.val} onChange={(e) => this.onChangeHandler(e)} disabled/>
+			<input style={{width:"50", height:"50", margins:"0", padding:"0", autocomplete:"false", textAlign:"center", fontSize:"20",backgroundColor:this.props.sqColor, borderColor:"black", borderWidth:"1", color:"rgb(0, 0, 255)", cursor:'not-allowed'}} maxLength="1" type="text" name="name" value={this.state.val} onChange={(e) => this.onChangeHandler(e)} disabled/>
 		  </label>
 		</form>
 		);
@@ -61,19 +62,19 @@ class ThreeByThreeGrid extends React.Component{
 		return (
 			<div>
 				<div style={{width:"150"}}>
-					<div style={{display:"inline-block"}}><Square ref="0" propTest={this.props.propTest} gridId={this.props.gridId} squareId='0' sqColor={this.props.gridColor}/></div>
-					<div style={{display:"inline-block"}}><Square ref="1" propTest={this.props.propTest} gridId={this.props.gridId} squareId='1' sqColor={this.props.gridColor}/></div>
-					<div style={{display:"inline-block"}}><Square ref="2" propTest={this.props.propTest} gridId={this.props.gridId} squareId='2' sqColor={this.props.gridColor}/></div>
+					<div style={{display:"inline-block"}}><Square ref="0" propTest={this.props.propTest} displayMsg={this.props.displayMsg} gridId={this.props.gridId} squareId='0' sqColor={this.props.gridColor}/></div>
+					<div style={{display:"inline-block"}}><Square ref="1" propTest={this.props.propTest} displayMsg={this.props.displayMsg} gridId={this.props.gridId} squareId='1' sqColor={this.props.gridColor}/></div>
+					<div style={{display:"inline-block"}}><Square ref="2" propTest={this.props.propTest} displayMsg={this.props.displayMsg} gridId={this.props.gridId} squareId='2' sqColor={this.props.gridColor}/></div>
 				</div>
 				<div  style={{width:"150"}}>
-					<div style={{display:"inline-block"}}><Square ref="3" propTest={this.props.propTest} gridId={this.props.gridId} squareId='3' sqColor={this.props.gridColor}/></div>
-					<div style={{display:"inline-block"}}><Square ref="4" propTest={this.props.propTest} gridId={this.props.gridId} squareId='4' sqColor={this.props.gridColor}/></div>
-					<div style={{display:"inline-block"}}><Square ref="5" propTest={this.props.propTest} gridId={this.props.gridId} squareId='5' sqColor={this.props.gridColor}/></div>
+					<div style={{display:"inline-block"}}><Square ref="3" propTest={this.props.propTest} displayMsg={this.props.displayMsg} gridId={this.props.gridId} squareId='3' sqColor={this.props.gridColor}/></div>
+					<div style={{display:"inline-block"}}><Square ref="4" propTest={this.props.propTest} displayMsg={this.props.displayMsg} gridId={this.props.gridId} squareId='4' sqColor={this.props.gridColor}/></div>
+					<div style={{display:"inline-block"}}><Square ref="5" propTest={this.props.propTest} displayMsg={this.props.displayMsg} gridId={this.props.gridId} squareId='5' sqColor={this.props.gridColor}/></div>
 				</div>
 				<div  style={{width:"150"}}>
-					<div style={{display:"inline-block"}}><Square ref="6" propTest={this.props.propTest} gridId={this.props.gridId} squareId='6' sqColor={this.props.gridColor}/></div>
-					<div style={{display:"inline-block"}}><Square ref="7" propTest={this.props.propTest} gridId={this.props.gridId} squareId='7' sqColor={this.props.gridColor}/></div>
-					<div style={{display:"inline-block"}}><Square ref="8" propTest={this.props.propTest} gridId={this.props.gridId} squareId='8' sqColor={this.props.gridColor}/></div>
+					<div style={{display:"inline-block"}}><Square ref="6" propTest={this.props.propTest} displayMsg={this.props.displayMsg} gridId={this.props.gridId} squareId='6' sqColor={this.props.gridColor}/></div>
+					<div style={{display:"inline-block"}}><Square ref="7" propTest={this.props.propTest} displayMsg={this.props.displayMsg} gridId={this.props.gridId} squareId='7' sqColor={this.props.gridColor}/></div>
+					<div style={{display:"inline-block"}}><Square ref="8" propTest={this.props.propTest} displayMsg={this.props.displayMsg} gridId={this.props.gridId} squareId='8' sqColor={this.props.gridColor}/></div>
 				</div>
 			</div>
 		);
@@ -83,6 +84,7 @@ class ThreeByThreeGrid extends React.Component{
 class SudokuGrid extends React.Component{
 	constructor(props){
 		super(props);
+		this.state = {message: '', alertClass: "alert alert-success", messageVisibility: "hidden"};
 		//this.test = '0';
 		this.test = this.test.bind(this);
 		this.grid = [['','','','','','','','',''], 
@@ -95,9 +97,12 @@ class SudokuGrid extends React.Component{
 		 ['','','','','','','','',''],
 		 ['','','','','','','','','']
 		];
+		this.message = "";
 		this.solve = this.solve.bind(this);
 		this.clearGrid = this.clearGrid.bind(this);
 		this.newGrid = this.newGrid.bind(this);
+		this.displayMsg = this.displayMsg.bind(this);
+		
 		
 		//this.newGridFast = this.newGridFast.bind(this);
 	}
@@ -118,6 +123,7 @@ class SudokuGrid extends React.Component{
 	clearGrid(e){
 		this.clearGridArray();
 		this.printToGUI('clearGrid');
+		this.displayMsg();
 	}
 	
 	getRandomBetweenRange(min, max){
@@ -183,6 +189,7 @@ class SudokuGrid extends React.Component{
 			}
 		}
 		this.printToGUI('newGrid');
+		this.displayMsg();
 	}
 	
 	newGridFast(e){
@@ -330,39 +337,60 @@ class SudokuGrid extends React.Component{
 		//check if input is valid
 		var valid = this.isSudokuGridValid(gridCopy);
 		if (!valid){
-			console.log('Wrong input!!!');
+			alert('Wrong input!!!');
 			return gridCopy;
 		}
 		var result = this.solveSudoku(gridCopy, 0, 0);
 		//console.log(result);
 		this.grid = gridCopy;
 		this.printToGUI();
+		this.displayMsg();
+	}
+
+	displayMsg(){
+		if (this.getNextCell(this.grid, 0, 0)[0] === null){
+			console.log("Called");
+			if (this.isSudokuGridValid(this.grid)){
+				this.setState({message: "Well done! You got it right!", alertClass: "alert alert-success", messageVisibility: "visible"});
+			}
+			else{
+				this.setState({message: "Oops! This is not right!", alertClass: "alert alert-danger", messageVisibility: "visible"});
+			}
+		}
+		else{
+				this.setState({message: "", messageVisibility: "hidden"});
+		}
+		console.log(this.state.message);
 	}
 	
 	render(){
 		return (
 			<div ref="sudoku">
 				<div>
-					<div style={{display:"inline-block"}}><ThreeByThreeGrid propTest={this.test} gridId='0' gridColor="rgba(160, 252, 153, 0.8)" ref="0"/></div>
-					<div style={{display:"inline-block"}}><ThreeByThreeGrid propTest={this.test} gridId='1' gridColor="rgba(0, 199, 255, 0.8)" ref="1"/></div>
-					<div style={{display:"inline-block"}}><ThreeByThreeGrid propTest={this.test} gridId='2' gridColor="rgba(160, 252, 153, 0.8)" ref="2"/></div>
+					<div style={{display:"inline-block"}}><ThreeByThreeGrid propTest={this.test} displayMsg={this.displayMsg} gridId='0' gridColor="rgba(160, 252, 153, 0.8)" ref="0"/></div>
+					<div style={{display:"inline-block"}}><ThreeByThreeGrid propTest={this.test} displayMsg={this.displayMsg} gridId='1' gridColor="rgba(0, 199, 255, 0.8)" ref="1"/></div>
+					<div style={{display:"inline-block"}}><ThreeByThreeGrid propTest={this.test} displayMsg={this.displayMsg} gridId='2' gridColor="rgba(160, 252, 153, 0.8)" ref="2"/></div>
 				</div>
 				<div>
-					<div style={{display:"inline-block"}}><ThreeByThreeGrid propTest={this.test} gridId='3' gridColor="rgba(0, 199, 255, 0.8)" ref="3"/></div>
-					<div style={{display:"inline-block"}}><ThreeByThreeGrid propTest={this.test} gridId='4' gridColor="rgba(160, 252, 153, 0.8)" ref="4"/></div>
-					<div style={{display:"inline-block"}}><ThreeByThreeGrid propTest={this.test} gridId='5' gridColor="rgba(0, 199, 255, 0.8)" ref="5"/></div>
+					<div style={{display:"inline-block"}}><ThreeByThreeGrid propTest={this.test} displayMsg={this.displayMsg} gridId='3' gridColor="rgba(0, 199, 255, 0.8)" ref="3"/></div>
+					<div style={{display:"inline-block"}}><ThreeByThreeGrid propTest={this.test} displayMsg={this.displayMsg} gridId='4' gridColor="rgba(160, 252, 153, 0.8)" ref="4"/></div>
+					<div style={{display:"inline-block"}}><ThreeByThreeGrid propTest={this.test} displayMsg={this.displayMsg} gridId='5' gridColor="rgba(0, 199, 255, 0.8)" ref="5"/></div>
 				</div>
 				<div>
-					<div style={{display:"inline-block"}}><ThreeByThreeGrid propTest={this.test} gridId='6' gridColor="rgba(160, 252, 153, 0.8)" ref="6"/></div>
-					<div style={{display:"inline-block"}}><ThreeByThreeGrid propTest={this.test} gridId='7' gridColor="rgba(0, 199, 255, 0.8)" ref="7"/></div>
-					<div style={{display:"inline-block"}}><ThreeByThreeGrid propTest={this.test} gridId='8' gridColor="rgba(160, 252, 153, 0.8)" ref="8"/></div>
+					<div style={{display:"inline-block"}}><ThreeByThreeGrid propTest={this.test} displayMsg={this.displayMsg} gridId='6' gridColor="rgba(160, 252, 153, 0.8)" ref="6"/></div>
+					<div style={{display:"inline-block"}}><ThreeByThreeGrid propTest={this.test} displayMsg={this.displayMsg} gridId='7' gridColor="rgba(0, 199, 255, 0.8)" ref="7"/></div>
+					<div style={{display:"inline-block"}}><ThreeByThreeGrid propTest={this.test} displayMsg={this.displayMsg} gridId='8' gridColor="rgba(160, 252, 153, 0.8)" ref="8"/></div>
 				</div>
-				<button className="btn-lg" onClick={(e) => this.newGrid('easy')}>Easy</button>
-				<button className="btn-lg" onClick={(e) => this.newGrid('medium')}>Medium</button>
-				<button className="btn-lg" onClick={(e) => this.newGrid('hard')}>Hard</button>
+				<br />
+				<button className="btn-lg btn-success" onClick={(e) => this.newGrid('easy')}>Easy</button>
+				<button className="btn-lg btn-warning" onClick={(e) => this.newGrid('medium')}>Medium</button>
+				<button className="btn-lg btn-danger" onClick={(e) => this.newGrid('hard')}>Hard</button>
 				<button className="btn-lg" onClick={(e) => this.solve(e)}>Solve</button>
 				<button className="btn-lg" onClick={(e) => this.clearGrid(e)}>Clear Grid</button>
-				
+				<br />
+				<div style={{visibility: this.state.messageVisibility}} className={this.state.alertClass} role="alert">
+					<strong>{this.state.message}</strong>
+				</div>
 			</div>
 		);
 	}	
