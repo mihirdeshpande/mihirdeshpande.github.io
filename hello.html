@@ -6,24 +6,6 @@
 
 <style>
 
-.col-xs-3{
-	margin-right:0px;
-	margin-left:0px;
-	padding: 0px 0px 0px 0px;
-}
-
-.col-xs-1{
-	margin-right:0px;
-	margin-left:0px;
-	padding: 0px 0px 0px 0px;
-}
-
-.col-xs-9{
-	margin-right:0px;
-	margin-left:0px;
-	padding: 0px 0px 0px 0px;
-}
-
 .sqClass{
 }
 
@@ -59,7 +41,17 @@ input:hover:disabled{
 </head>
 
 <body>
-<div id="app_container" className="container"></div>
+<div class="container"> 
+<div class="row">
+<div class="col-xs-2"></div>
+<div class="col-xs-8" align="center">
+	<div> <h1><b>Play Sudoku</b></h1></div>
+	<div id="app_container"></div>
+</div>
+<div class="col-xs-2"></div>
+</div>
+</div>
+
 
  <!-- Load React. -->
  <!-- Note: when deploying, replace "development.js" with "production.min.js". -->
